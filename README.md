@@ -158,7 +158,7 @@ id (^blockName2)(id) = ^ id (id args) {
 
  * Avoid making numbers a specific type unless necessary (for example, prefer `5` to `5.0`, and `5.3` to `5.3f`).
  * The contents of array and dictionary literals should have a space on both sides.
- * Dictionary literals should have ~~no space between the key and the colon, and~~ a single space between the **key**, colon and value each.
+ * Dictionary literals should have no space between the key and the colon, and a single space between the colon and value.
 
 ``` objc
 NSArray *theShit = @[ @1, @2, @3 ];
@@ -176,11 +176,11 @@ NSArray *theShit = @[
 ];
 
 NSDictionary *keyedShit = @{
-    @"this.key" : @"corresponds to this value",
-    @"otherKey" : @"remoteData.payload",
-    @"some" : @"more",
-    @"JSON" : @"keys",
-    @"and" : @"stuff",
+    @"this.key": @"corresponds to this value",
+    @"otherKey": @"remoteData.payload",
+    @"some": @"more",
+    @"JSON": @"keys",
+    @"and": @"stuff",
 };
 ```
 
