@@ -1,47 +1,48 @@
 These guidelines build on Apple's existing [Coding Guidelines for Cocoa](https://developer.apple.com/library/mac/#documentation/Cocoa/Conceptual/CodingGuidelines/CodingGuidelines.html).
-Unless explicitly contradicted below, assume that all of Apple's guidelines apply as well.
+Unless explicitly contradicted below, assume that all of Apple's guidelines apply as well. **Bold indicates a deviation from GitHub's conventions.** ~~Strikethrough~~ indicates removal of a GitHub rule.
 
 ## Whitespace
 
- * Tabs, not spaces.
+ * **Spaces, not tabs. 4 space width.**
  * End files with a newline.
  * Make liberal use of vertical whitespace to divide code into logical chunks.
 
 ## Documentation and Organization
 
- * All method declarations should be documented.
+ * ~~All method declarations should be documented.~~
  * Comments should be hard-wrapped at 80 characters.
- * Comments should be [Tomdoc](http://tomdoc.org/)-style.
- * Document whether object parameters allow `nil` as a value.
+ * **Any public documentation should use AppleDoc format**
+ * Document whether object parameters allow `nil` as a value when appropriate.
  * Use `#pragma mark`s to categorize methods into functional groupings and protocol implementations, following this general structure:
 
 ```objc
-#pragma mark Properties
+
+#pragma mark - Lifecycle
+
++ (id)objectWithThing:(id)thing {}
+- (id)init {}
+
+#pragma mark - Properties
 
 @dynamic someProperty;
 
 - (void)setCustomProperty:(id)value {}
 
-#pragma mark Lifecycle
-
-+ (id)objectWithThing:(id)thing {}
-- (id)init {}
-
-#pragma mark Drawing
+#pragma mark - Drawing
 
 - (void)drawRect:(CGRect) {}
 
-#pragma mark Another functional grouping
+#pragma mark - Another functional grouping
 
-#pragma mark GHSuperclass
+#pragma mark - GHSuperclass
 
 - (void)someOverriddenMethod {}
 
-#pragma mark NSCopying
+#pragma mark - NSCopying
 
 - (id)copyWithZone:(NSZone *)zone {}
 
-#pragma mark NSObject
+#pragma mark - NSObject
 
 - (NSString *)description {}
 ```
@@ -49,9 +50,9 @@ Unless explicitly contradicted below, assume that all of Apple's guidelines appl
 ## Declarations
 
  * Never declare an ivar unless you need to change its type from its declared property.
- * Don’t use line breaks in method declarations.
+ * ~~Don’t use line breaks in method declarations.~~
  * Prefer exposing an immutable type for a property if it being mutable is an implementation detail. This is a valid reason to declare an ivar for a property.
- * Always declare memory-management semantics even on `readonly` properties.
+ * ~~Always declare memory-management semantics even on `readonly` properties.~~
  * Declare properties `readonly` if they are only set once in `-init`.
  * Declare properties `copy` if they return immutable objects and aren't ever mutated in the implementation.
  * Don't use `@synthesize` unless the compiler requires it. Note that optional properties in protocols must be explicitly synthesized in order to exist.
@@ -81,8 +82,10 @@ void GHAwesomeFunction(BOOL hasSomeArgs);
  * Don't access an ivar unless you're in `-init`, `-dealloc` or a custom accessor.
  * Use dot-syntax when invoking idempotent methods, including setters and class methods (like `NSFileManager.defaultManager`).
  * Use object literals, boxed expressions, and subscripting over the older, grosser alternatives.
- * Comparisons should be explicit for everything except `BOOL`s.
+ * Comparisons should be explicit for everything except `BOOL`s **and pointer comparisons to nil. (i.e. don't do `if (index)` with an NSInteger)**
  * Prefer positive comparisons to negative.
+ * **`obj == nil` is prefered over `!obj`**
+ * **Don't nest ternary operators.**
  * Long form ternary operators should be wrapped in parentheses and only used for assignment and arguments.
 
 ```objc
@@ -111,7 +114,6 @@ for (int i = 0; i < 10; i++) {
  * Always surround `if` bodies with curly braces if there is an `else`. Single-line `if` bodies without an `else` should be on the same line as the `if`. 
  * All curly braces should begin on the same line as their associated statement. They should end on a new line.
  * Put a single space after keywords and before their parentheses.
- * Return and break early.
  * No spaces between parentheses and their contents.
 
 ```objc
@@ -128,7 +130,7 @@ if (something == nil) {
 
  * Don't use exceptions for flow control.
  * Use exceptions only to indicate programmer error.
- * To indicate errors, use an `NSError **` argument or send an error on a [ReactiveCocoa](https://github.com/ReactiveCocoa/ReactiveCocoa) signal.
+ * To indicate errors, use an `NSError **` argument, **or failure block**. ~~or send an error on a [ReactiveCocoa](https://github.com/ReactiveCocoa/ReactiveCocoa) signal~~.
 
 ## Blocks
 
@@ -151,12 +153,12 @@ id (^blockName2)(id) = ^ id (id args) {
 
  * Avoid making numbers a specific type unless necessary (for example, prefer `5` to `5.0`, and `5.3` to `5.3f`).
  * The contents of array and dictionary literals should have a space on both sides.
- * Dictionary literals should have no space between the key and the colon, and a single space between colon and value.
+ * Dictionary literals should have ~~no space between the key and the colon, and~~ a single space between the **key**, colon and value each.
 
 ``` objc
 NSArray *theShit = @[ @1, @2, @3 ];
 
-NSDictionary *keyedShit = @{ GHDidCreateStyleGuide: @YES };
+NSDictionary *keyedShit = @{ GHDidCreateStyleGuide : @YES };
 ```
 
  * Longer or more complex literals should be split over multiple lines (optionally with a terminating comma):
@@ -169,16 +171,16 @@ NSArray *theShit = @[
 ];
 
 NSDictionary *keyedShit = @{
-    @"this.key": @"corresponds to this value",
-    @"otherKey": @"remoteData.payload",
-    @"some": @"more",
-    @"JSON": @"keys",
-    @"and": @"stuff",
+    @"this.key" : @"corresponds to this value",
+    @"otherKey" : @"remoteData.payload",
+    @"some" : @"more",
+    @"JSON" : @"keys",
+    @"and" : @"stuff",
 };
 ```
 
 ## Categories
 
- * Categories should be named for the sort of functionality they provide. Don't create umbrella categories.
- * Category methods should always be prefixed.
- * If you need to expose private methods for subclasses or unit testing, create a class extension named `Class+Private`.
+ * Categories should be named for the sort of functionality they provide. ~~Don't create umbrella categories.~~ Umbrella categories are acceptable for grouping convenience methods.
+ * Category methods should ~~always be prefixed.~~ be prefixed if they are part of a library that will be shared.
+ * If you need to expose private methods for subclasses or unit testing, create a class extension named `Class+Subclass`.
